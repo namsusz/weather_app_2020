@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Alert } from "react-native";
 import Loading from "./Loading";
 import * as Location from "expo-location";
 import Weather from "./Weather";
+import axios from "axios";
 
 const API_KEY = "255c6505f7cd60548704c864dbaaf0e6";
 
@@ -37,6 +38,7 @@ export default class extends React.Component {
         lat
       )}&lon=${Math.floor(lon)}&appid=${API_KEY}&units=metric`
     );
+    console.log(data);
     this.setState({ isLoading: false, temp: data.main.temp });
   };
 }
