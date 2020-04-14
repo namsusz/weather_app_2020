@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { Alert } from "react-native";
 import Loading from "./Loading";
 import * as Location from "expo-location";
 import Weather from "./Weather";
@@ -10,10 +10,23 @@ const API_KEY = "255c6505f7cd60548704c864dbaaf0e6";
 export default class extends React.Component {
   state = {
     isLoading: true,
+    temp: "",
+    condition: "",
+    tempmax: "",
+    tempmin: "",
   };
   render() {
-    const { isLoading, temp } = this.state;
-    return isLoading ? <Loading /> : <Weather temp={Math.round(temp)} />;
+    const { isLoading, temp, condition, tempmax, tempmin } = this.state;
+    return isLoading ? (
+      <Loading />
+    ) : (
+      <Weather
+        temp={Math.round(temp)}
+        condition={condition}
+        tempmax={Math.round(tempmax)}
+        tempmin={Math.round(tempmin)}
+      />
+    );
   }
   componentDidMount() {
     this.getLocation();
@@ -33,12 +46,22 @@ export default class extends React.Component {
     }
   };
   getWeather = async (lat, lon) => {
-    const { data } = await axios.get(
+    const {
+      data: {
+        main: { temp, temp_min, temp_max },
+        weather,
+      },
+    } = await axios.get(
       `http://api.openweathermap.org/data/2.5/weather?lat=${Math.floor(
         lat
       )}&lon=${Math.floor(lon)}&appid=${API_KEY}&units=metric`
     );
-    console.log(data);
-    this.setState({ isLoading: false, temp: data.main.temp });
+    this.setState({
+      isLoading: false,
+      temp,
+      condition: weather[0].main,
+      tempmax: temp_max,
+      tempmin: temp_min,
+    });
   };
 }
